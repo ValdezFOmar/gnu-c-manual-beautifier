@@ -16,13 +16,17 @@ if TYPE_CHECKING:
 
     Soup: TypeAlias = bs4.BeautifulSoup
 
+STYLE = 'github-dark'
 PARSER = 'html.parser'
-CODE_CLASS = 'example-preformatted'
-
+FORMATTER: HtmlFormatter[str] = HtmlFormatter(
+    encoding='utf-8',
+    style=STYLE,
+    linenos='table',
+)
 
 def gen_css_clases(destination: Path) -> None:
     with open(destination / 'highlights.css', 'w', encoding='utf-8') as css:
-        css.write(HtmlFormatter().get_style_defs(f'pre.{CODE_CLASS}'))
+        css.write(FORMATTER.get_style_defs())
 
 
 def add_css(soup: Soup, stylesheet: str) -> Soup:
@@ -33,14 +37,12 @@ def add_css(soup: Soup, stylesheet: str) -> Soup:
 
 
 def highlight_codeblocks(soup: Soup) -> Soup:
-    formatter: HtmlFormatter[str] = HtmlFormatter(encoding='utf-8')
     lexer = CLexer()
-    for pre_tag in soup.find_all('pre', class_=CODE_CLASS): # pyright: ignore
+    for pre_tag in soup.find_all('pre', class_='example-preformatted'): # pyright: ignore
         assert isinstance(pre_tag, bs4.Tag)
-        div = bs4.BeautifulSoup(highlight(pre_tag.get_text(), lexer, formatter), PARSER)
-        assert div.pre is not None
-        div.pre['class'] = CODE_CLASS
-        pre_tag.replace_with(div.pre)
+        div = bs4.BeautifulSoup(highlight(pre_tag.get_text(), lexer, FORMATTER), PARSER)
+        assert div.table is not None
+        pre_tag.replace_with(div.table)
     return soup
 
 

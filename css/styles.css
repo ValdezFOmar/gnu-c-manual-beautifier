@@ -4,12 +4,12 @@
 /** General **/
 
 :root {
-    --blue: #739df2;
+    --blue: #638df2;
     --purple: #9e6ffe;
-    --yellow: #f8cf7c;
+    /*--yellow: #f8cf7c;
     --green: #8aec69;
-    --code: #78cec1;
-    --pink: #f2a7de;
+    --pink: #f2a7de; */
+    --code-co: #a0a8f6;
     --white: #c5d1f1;
     --margin-item: 0.4em;
     --bg: #19191a;
@@ -18,13 +18,23 @@
     font-size: 18px;
     color: var(--white);
     background-color: var(--contrast-bg);
+    height: 100%;
+    box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
 }
 
 body {
     margin: 0 auto;
     max-width: 800px;
+    min-height: 100%;
     background-color: var(--bg);
     padding: 1.5rem 2rem;
+    box-shadow: 0 0 60px 30px #070707;
 }
 
 p {
@@ -83,26 +93,28 @@ span.r {
 
 div.example {
     margin: 1em 0;
-    padding-block: 1em;
-    padding-left: 3.2em;
+    padding: 1em;
     background-color: var(--contrast-bg);
-    border-radius: 1em;
+    border-radius: 0.6em;
     overflow-x: scroll;
 }
 
-:not(pre) code.code {
-    /*color: var(--code);*/
-    font-size: 0.9em;
-    padding: 1px 0.33em;
-    background-color: var(--contrast-bg);
-    border-radius: 0.33em;
+table td.code {
+    padding-left: 1em;
 }
 
-pre.example-preformatted {
+:not(pre) code.code {
+    font-size: 0.9em;
+    padding: 0.1em 0.33em;
+    background-color: var(--contrast-bg);
+    border-radius: 0.33em;
+    color: var(--code-co);
+}
+
+div.example :is(pre, .normal) {
     margin: 0;
     background: none;
     font-size: 0.9em;
-    /* color: var(--code); */
 }
 
 pre.example-preformatted code.code {

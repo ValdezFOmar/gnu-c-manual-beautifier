@@ -1,10 +1,12 @@
 # GNU C Manual Beautifier
 
-This python script re parses the GNU C Manual HTML and adds:
+This python script re parses the HTML generated from the
+[GNU C Language Introduction and Reference Manual](https://www.gnu.org/software/c-intro-and-ref/) and adds:
 
 - [x] CSS style sheets 
-- [ ] Syntax highlighting for code blocks
-- [ ] A side panel navigating between sections
+- [x] Syntax highlighting for code blocks
+- [ ] A side panel for navigating between sections
+- [ ] Improved navbar
 
 # Generate Manual
 
