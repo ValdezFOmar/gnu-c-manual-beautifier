@@ -1,0 +1,111 @@
+@import 'normalize.css';
+@import 'highlights.css';
+
+/** General **/
+
+:root {
+    --blue: #739df2;
+    --purple: #9e6ffe;
+    --yellow: #f8cf7c;
+    --green: #8aec69;
+    --code: #78cec1;
+    --pink: #f2a7de;
+    --white: #c5d1f1;
+    --margin-item: 0.4em;
+    --bg: #19191a;
+    --contrast-bg: #0b0d0e;
+    margin: 0;
+    font-size: 18px;
+    color: var(--white);
+    background-color: var(--contrast-bg);
+}
+
+body {
+    margin: 0 auto;
+    max-width: 800px;
+    background-color: var(--bg);
+    padding: 1.5rem 2rem;
+}
+
+p {
+    text-align: justify;
+}
+
+:is(ul, ol) li {
+    margin-bottom: var(--margin-item);
+}
+
+.contents>ul>li {
+    margin-bottom: calc(var(--margin-item) * 2);
+}
+
+:is(ul, ol)>li>:is(ul, ol) li:first-child {
+    margin-top: var(--margin-item);
+}
+
+/* Follow this precise order for links */
+a {
+    text-decoration: none;
+}
+
+a:link {
+    color: var(--blue);
+}
+
+a:visited {
+    color: var(--purple);
+}
+
+a:focus {
+    outline: var(--blue) solid 1px;
+}
+
+a:hover {
+    text-decoration: underline 1px;
+}
+
+a:active {
+    color: var(--yellow);
+}
+
+
+/** Navbar **/
+div.nav-panel p {
+    margin: 0;
+}
+
+
+/** Code **/
+span.r {
+    font: inherit;
+    color: #848cad;
+}
+
+div.example {
+    margin: 1em 0;
+    padding-block: 1em;
+    padding-left: 3.2em;
+    background-color: var(--contrast-bg);
+    border-radius: 1em;
+    overflow-x: scroll;
+}
+
+:not(pre) code.code {
+    /*color: var(--code);*/
+    font-size: 0.9em;
+    padding: 1px 0.33em;
+    background-color: var(--contrast-bg);
+    border-radius: 0.33em;
+}
+
+pre.example-preformatted {
+    margin: 0;
+    background: none;
+    font-size: 0.9em;
+    /* color: var(--code); */
+}
+
+pre.example-preformatted code.code {
+    color: inherit;
+    font-weight: bold;
+}

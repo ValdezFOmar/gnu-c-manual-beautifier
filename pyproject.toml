@@ -1,0 +1,12 @@
+[tool.isort]
+profile = 'black'
+line_length = 100
+skip_gitignore = true
+
+[tool.pyright]
+pythonVersion = '3.9'
+pythonPlatform = 'All'
+typeCheckingMode = 'strict'
+reportUnusedImport = false
+reportUnknownMemberType = false
+reportUnknownArgumentType = false

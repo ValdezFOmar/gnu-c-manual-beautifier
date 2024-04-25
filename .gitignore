@@ -1,5 +1,5 @@
-# Generated files
-gnu-c-manual/
+docs/
+css/highlights.css
 
 # Python
 __pycache__/
