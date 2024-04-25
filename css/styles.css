@@ -41,6 +41,10 @@ p {
     text-align: justify;
 }
 
+p, ul, ol {
+    letter-spacing: 0.5px;
+}
+
 :is(ul, ol) li {
     margin-bottom: var(--margin-item);
 }
@@ -108,7 +112,6 @@ table td.code {
     padding: 0.1em 0.33em;
     background-color: var(--contrast-bg);
     border-radius: 0.33em;
-    color: var(--code-co);
 }
 
 div.example :is(pre, .normal) {
