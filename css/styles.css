@@ -17,9 +17,10 @@
     margin: 0;
     font-size: 18px;
     color: var(--white);
-    background-color: var(--contrast-bg);
     height: 100%;
     box-sizing: border-box;
+    background:
+        var(--contrast-bg) top/10% repeat url('c-letter-pattern.png') fixed;
 }
 
 *,
@@ -34,14 +35,17 @@ body {
     min-height: 100%;
     background-color: var(--bg);
     padding: 1.5rem 2rem;
-    box-shadow: 0 0 60px 30px #070707;
+    box-shadow: 0 0 40px 40px #070707;
 }
+
 
 p {
     text-align: justify;
 }
 
-p, ul, ol {
+p,
+ul,
+ol {
     letter-spacing: 0.5px;
 }
 
@@ -55,6 +59,11 @@ p, ul, ol {
 
 :is(ul, ol)>li>:is(ul, ol) li:first-child {
     margin-top: var(--margin-item);
+}
+
+dl dt {
+    font-weight: bold;
+    font-size: 1.1em;
 }
 
 /* Follow this precise order for links */
