@@ -10,7 +10,6 @@ import bs4
 from pygments import highlight  # pyright: ignore[reportUnknownVariableType]
 from pygments.formatters import HtmlFormatter
 from pygments.lexers import CLexer
-from pygments.token import Name
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
@@ -26,12 +25,8 @@ FORMATTER: HtmlFormatter[str] = HtmlFormatter(
 )
 
 def gen_css_clases(destination: Path) -> None:
-    custom = f':not(pre) code.code {{ color: {FORMATTER.style.styles[Name]}; }}'
-
     with open(destination / 'highlights.css', 'w', encoding='utf-8') as css:
         print(FORMATTER.get_style_defs(), file=css)
-        print('/* Custom styles */', file=css)
-        print(custom, file=css)
 
 
 def add_css(soup: Soup, stylesheet: str) -> Soup:
