@@ -7,6 +7,7 @@ skip_gitignore = true
 pythonVersion = '3.9'
 pythonPlatform = 'All'
 typeCheckingMode = 'strict'
+reportUnusedFunction = 'information'
 reportUnusedImport = false
 reportUnknownMemberType = false
 reportUnknownArgumentType = false

@@ -31,7 +31,7 @@ body {
     min-height: 100%;
     background-color: var(--bg);
     padding: 1.5rem 2rem;
-    box-shadow: 0 0 40px 40px #070707;
+    box-shadow: 0 0 40px 40px #070707EE;
 }
 
 
@@ -90,8 +90,32 @@ a:active {
 
 
 /** Navbar **/
-div.nav-panel p {
+.nav-panel p {
     margin: 0;
+}
+
+.nav-index {
+    display: flex;
+    justify-content: center;
+    column-gap: 2em;
+}
+
+.nav-topics {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+}
+
+.nav-topics a:first-child {
+    text-align: left;
+}
+
+.nav-topics a:nth-child(2) {
+    text-align: center;
+}
+
+.nav-topics a:nth-child(3) {
+    text-align: right;
 }
 
 
@@ -113,6 +137,7 @@ table td.code {
     padding-left: 1em;
 }
 
+samp,
 :not(pre) code.code {
     font-size: 0.9em;
     padding: 0.2em 0.33em;
