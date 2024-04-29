@@ -106,15 +106,11 @@ def generate_navbar(soup: Soup) -> Soup:
 
 def process_html(html_source: Path, stylesheet: Path, destination: Path):
     destination.mkdir(parents=True, exist_ok=True)
-    dest_css = destination / stylesheet.name
-
-    if not dest_css.exists():
-        dest_css.symlink_to(stylesheet.absolute())
-
-    total = sum(1 for _ in html_source.glob('*.html'))
+    html_pages = tuple(html_source.glob('*.html'))
+    total = len(html_pages)
     pad = len(str(total))
 
-    for i, file in enumerate(html_source.glob('*.html'), 1):
+    for i, file in enumerate(html_pages, 1):
         print(f'[{i:>{pad}} - {total}]', file.name)
         if not file.is_file():
             continue
@@ -131,6 +127,14 @@ def process_html_page(html_source: Path, stylesheet: Path, destination: Path):
         out.write(html.decode(formatter='html'))
 
 
+def gen_symbolic_links(destination: Path, *paths: Path) -> None:
+    destination.mkdir(parents=True, exist_ok=True)
+    for path in paths:
+        link = destination / path.name
+        if not link.exists():
+            link.symlink_to(path.resolve())
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description='beautify the GNU C Manual')
     parser.add_argument('--css', action='store_true')
@@ -143,10 +147,11 @@ def main() -> int:
 
     destination = Path('docs/')
     source = Path('gnu-c-manual/c.html.d/')
-    css = Path('css/styles.css')
+    css_dir = Path('css/')
+    css = css_dir / 'styles.css'
 
     if args.css:
-        gen_css_clases(css)
+        gen_css_clases(css_dir)
     if args.html:
         if not source.exists():
             parser.error(f"'{source}' doesn't exist, generate the HTML files first")
@@ -157,6 +162,9 @@ def main() -> int:
         if not html_page.exists():
             parser.error(f"'{html_page}' doesn't exists")
         process_html_page(html_page, css, destination)
+    if args.html_page or args.html:
+        gen_symbolic_links(destination, css)
+
     return 0
 
 
