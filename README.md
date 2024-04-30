@@ -7,6 +7,7 @@ This python script re parses the HTML generated from the
 - [x] Syntax highlighting for code blocks
 - [ ] A side panel for navigating between sections
 - [x] Improved navbar
+- [ ] Different style/structure for mini table of contents
 
 # Generate Manual
 
@@ -32,3 +33,13 @@ Lastly, got back to the root of the repo and beautify the html:
 ```bash
 python beautify.py --html --css
 ```
+
+# License
+
+This program is licensed under the [GLPv3](LICENSE) or later.
+
+The following icons were taken from the [Papirus Icon Theme](https://github.com/PapirusDevelopmentTeam/papirus-icon-theme/)
+which is licensed under the same license:
+
+- [`go-previous.svg`](css/go-previous.svg)
+- [`go-next.svg`](css/go-next.svg)

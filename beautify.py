@@ -6,7 +6,7 @@ import argparse
 import copy
 from pathlib import Path
 from collections.abc import Iterable
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, NamedTuple
 
 import bs4
 from pygments import highlight  # pyright: ignore[reportUnknownVariableType]
@@ -27,12 +27,18 @@ FORMATTER: HtmlFormatter[str] = HtmlFormatter(
     linenos='table',
 )
 
+
+class Assets(NamedTuple):
+    prev_img: Path
+    next_img: Path
+
+
 def gen_css_clases(destination: Path) -> None:
     with open(destination / 'highlights.css', 'w', encoding='utf-8') as css:
         print(FORMATTER.get_style_defs(), file=css)
 
 
-def add_css(soup: Soup, stylesheet: str) -> Soup:
+def add_css(soup: Soup, stylesheet: Path) -> Soup:
     head = soup.find('head')
     assert isinstance(head, bs4.Tag)
     head.append(soup.new_tag('link', rel='stylesheet', type='text/css', href=stylesheet))
@@ -49,11 +55,11 @@ def highlight_codeblocks(soup: Soup) -> Soup:
     return soup
 
 
-def is_tag_list(obj: Iterable[object]) -> TypeGuard[list[bs4.Tag]]:
+def is_tag_list(obj: Iterable[object]) -> TypeGuard[list[Tag]]:
     return isinstance(obj, list) and all(isinstance(i, bs4.Tag) for i in obj)
 
 
-def generate_navbar(soup: Soup) -> Soup:
+def generate_navbar(soup: Soup, assets: Assets) -> Soup:
     navs = soup.find_all('div', class_='nav-panel')
 
     if not navs:
@@ -69,25 +75,39 @@ def generate_navbar(soup: Soup) -> Soup:
     top_nav.append(index_div)
     top_nav.append(topics_div)
 
-    index_types = ['contents', 'index']
-    topics_types = ['prev', 'up', 'next']
-    index_tags = [copy.copy(empty_div) for _ in index_types]
-    topic_tags = [copy.copy(empty_div) for _ in topics_types]
+    index_rel = ['contents', 'index']
+    topic_rel = ['prev', 'up', 'next']
+    index_tags = [copy.copy(empty_div) for _ in index_rel]
+    topic_tags = [copy.copy(empty_div) for _ in topic_rel]
     assert top_nav.p is not None
 
     for child in top_nav.p.children:
         if not (isinstance(child, bs4.Tag) and child.name == 'a'):
             continue
         rel = child['rel'][0]
-        if rel in topics_types:
-            topic_tags[topics_types.index(rel)] = child
-        elif rel in index_types:
-            index_tags[index_types.index(rel)] = child
-    for tag in index_tags:
-        index_div.append(tag.extract())
-    for tag in topic_tags:
-        topics_div.append(tag.extract())
+        if rel in topic_rel:
+            topic_tags[topic_rel.index(rel)] = child.extract()
+        elif rel in index_rel:
+            index_tags[index_rel.index(rel)] = child.extract()
     top_nav.p.decompose()
+
+    for tag in index_tags:
+        index_div.append(tag)
+    for tag in topic_tags:
+        if tag.contents:
+            span = soup.new_tag('span')
+            span.string = tag.get_text()
+            tag.clear()
+            rel = tag['rel'][0]
+            if rel == topic_rel[0]:
+                tag.append(soup.new_tag('img', src=assets.prev_img))
+                tag.append(span)
+            elif rel == topic_rel[1]:
+                tag.append(span)
+            elif rel == topic_rel[2]:
+                tag.append(span)
+                tag.append(soup.new_tag('img', src=assets.next_img))
+        topics_div.append(tag)
 
     if len(navs) != 2:
         return soup
@@ -104,7 +124,7 @@ def generate_navbar(soup: Soup) -> Soup:
     return soup
 
 
-def process_html(html_source: Path, stylesheet: Path, destination: Path):
+def process_html(destination: Path, html_source: Path, stylesheet: Path, assets: Assets) -> None:
     destination.mkdir(parents=True, exist_ok=True)
     html_pages = tuple(html_source.glob('*.html'))
     total = len(html_pages)
@@ -114,15 +134,15 @@ def process_html(html_source: Path, stylesheet: Path, destination: Path):
         print(f'[{i:>{pad}} - {total}]', file.name)
         if not file.is_file():
             continue
-        process_html_page(file, stylesheet, destination)
+        process_html_page(destination, file, stylesheet, assets)
 
 
-def process_html_page(html_source: Path, stylesheet: Path, destination: Path):
+def process_html_page(destination: Path, html_source: Path, stylesheet: Path, assets: Assets) -> None:
     with open(html_source, 'r', encoding='utf-8') as f:
         html = bs4.BeautifulSoup(f, PARSER)
-    add_css(html, stylesheet.name)
+    add_css(html, stylesheet)
     highlight_codeblocks(html)
-    generate_navbar(html)
+    generate_navbar(html, assets)
     with open(destination / html_source.name, 'w', encoding='utf-8') as out:
         out.write(html.decode(formatter='html'))
 
@@ -140,6 +160,7 @@ def main() -> int:
     parser.add_argument('--css', action='store_true')
     parser.add_argument('--html', action='store_true')
     parser.add_argument('--html-page')
+    parser.add_argument('--symlink', action='store_true')
     args = parser.parse_args()
 
     if not any(vars(args).values()):
@@ -149,21 +170,26 @@ def main() -> int:
     source = Path('gnu-c-manual/c.html.d/')
     css_dir = Path('css/')
     css = css_dir / 'styles.css'
+    assets_dir = Path('assets/')
+    assets = Assets(
+         prev_img=assets_dir / 'go-previous.svg',
+         next_img=assets_dir / 'go-next.svg',
+    )
 
     if args.css:
         gen_css_clases(css_dir)
     if args.html:
         if not source.exists():
             parser.error(f"'{source}' doesn't exist, generate the HTML files first")
-        process_html(source, css, destination)
+        process_html(destination, source, css, assets)
         print((destination / 'index.html').resolve().as_uri())
     if args.html_page:
         html_page = Path(args.html_page)
         if not html_page.exists():
             parser.error(f"'{html_page}' doesn't exists")
-        process_html_page(html_page, css, destination)
-    if args.html_page or args.html:
-        gen_symbolic_links(destination, css)
+        process_html_page(destination, html_page, css, assets)
+    if args.symlink or args.html_page or args.html:
+        gen_symbolic_links(destination, css_dir, assets_dir)
 
     return 0
 
