@@ -7,11 +7,12 @@
     --blue: #638df2;
     --purple: #9e6ffe;
     --white: #c5d1f1;
-    --margin-item: 0.4em;
+    --item-spacing: 0.4em;
     --bg: #19191a;
     --fg: var(--white);
     --contrast-bg: #0b0d0e;
     --light-bg: #2c2f40;
+    --border-color: #919199;
     margin: 0;
     font-size: 100%;
     color: var(--fg);
@@ -36,6 +37,10 @@ body {
     box-shadow: 0 0 40px 40px #070707EE;
 }
 
+hr {
+    color: var(--border-color);
+}
+
 p {
     text-align: justify;
 }
@@ -48,7 +53,7 @@ ol {
 }
 
 li {
-    margin-bottom: var(--margin-item);
+    margin-bottom: var(--item-spacing);
 }
 
 dl dt {
@@ -71,6 +76,7 @@ a:visited {
 
 a:focus {
     outline: var(--blue) solid 1px;
+    outline-offset: 2px;
 }
 
 a:hover {
@@ -79,6 +85,56 @@ a:hover {
 
 a:active {
     color: var(--purple);
+}
+
+/*
+ * Use for containing float elements that overflow the parent. See:
+ * https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_display/Block_formatting_context#contain_internal_floats
+ */
+.contain-float {
+    display: flow-root;
+}
+
+
+/** Table of contents **/
+:is(.contents, .shortcontents) li {
+    margin-block: calc(var(--item-spacing) / 2);
+}
+
+.contents>ul>li {
+    margin-bottom: calc(var(--item-spacing) * 2);
+}
+
+.mini-content {
+    width: fit-content;
+    margin: 4px 1em 0.9em 4px;
+    padding: 1em 1.2em;
+    border: 0.15em solid var(--border-color);
+    border-radius: 0.4em;
+    float: left;
+}
+
+.mini-content-header {
+    font: 1.2em;
+    font-weight: bold;
+    display: block;
+    margin-block: 0 0.8em;
+}
+
+.mini-toc {
+    margin: 0;
+    padding-left: 1.5em;
+    display: flex;
+    flex-flow: column;
+    gap: var(--item-spacing);
+}
+
+.mini-toc li {
+    margin: 0
+}
+
+.mini-toc a {
+    color: inherit
 }
 
 
@@ -154,6 +210,16 @@ div.example {
     background-color: var(--contrast-bg);
     border-radius: 0.6em;
     overflow-x: scroll;
+    /**
+     * FIXME: In some cases where the TOC is too tall, an .example element below
+     * will create a huge gap, but if this rule is removed then in other cases the
+     * code will be moved to the right but it will not wrap around, creating a gap
+     * under the TOC.
+     * A possible solution could be to dynamically (javascript) change the styling
+     * depending on the size, using 2 clases: one for 'clear: both' and another for
+     * 'clear: none'
+     */
+    clear: both;
 }
 
 table td.code {

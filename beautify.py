@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 import argparse
 import copy
 from pathlib import Path
@@ -19,6 +20,8 @@ if TYPE_CHECKING:
     Tag: TypeAlias = bs4.Tag
     Soup: TypeAlias = bs4.BeautifulSoup
 
+
+CLASS_EXTEN_LEVEL_PATTERN = re.compile(r'\w+-level-extent')
 STYLE = 'github-dark'
 PARSER = 'html.parser'
 FORMATTER: HtmlFormatter[str] = HtmlFormatter(
@@ -124,6 +127,34 @@ def generate_navbar(soup: Soup, assets: Assets) -> Soup:
     return soup
 
 
+# toc -> table of contents
+def change_mini_toc(soup: Soup) -> Soup:
+    toc = soup.find('ul', class_='mini-toc')
+    if not isinstance(toc, bs4.Tag):
+        return soup
+
+    toc.name = 'ol'
+    extent_tag = soup.find(class_=CLASS_EXTEN_LEVEL_PATTERN)
+    if not isinstance(extent_tag, bs4.Tag):
+        return soup
+
+    extent_level = extent_tag['class'][0].split('-')[0]
+    toc_header = soup.new_tag('span', attrs={'class': 'mini-content-header'})
+    toc_header.string = f'{extent_level.title()} Content'
+
+    extent_header = soup.find(class_=extent_level)
+    assert isinstance(extent_header, bs4.Tag)  # This should exists and be a tag
+
+    div = soup.new_tag('div', attrs={'class': 'mini-content'})
+    div.append(toc_header)
+    div.append(toc.extract())
+    extent_header.insert_after(div)
+    assert div.parent
+    # the mini-toc may overflow
+    div.parent['class'].append('contain-float')  # pyright: ignore[reportAttributeAccessIssue]
+    return soup
+
+
 def process_html(destination: Path, html_source: Path, stylesheet: Path, assets: Assets) -> None:
     destination.mkdir(parents=True, exist_ok=True)
     html_pages = tuple(html_source.glob('*.html'))
@@ -143,6 +174,7 @@ def process_html_page(destination: Path, html_source: Path, stylesheet: Path, as
     add_css(html, stylesheet)
     highlight_codeblocks(html)
     generate_navbar(html, assets)
+    change_mini_toc(html)
     with open(destination / html_source.name, 'w', encoding='utf-8') as out:
         out.write(html.decode(formatter='html'))
 

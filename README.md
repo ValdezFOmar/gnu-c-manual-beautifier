@@ -5,9 +5,9 @@ This python script re parses the HTML generated from the
 
 - [x] CSS style sheets 
 - [x] Syntax highlighting for code blocks
-- [ ] A side panel for navigating between sections
+- [ ] A side panel for navigating between chapters/sections
 - [x] Improved navbar
-- [ ] Different style/structure for mini table of contents
+- [x] Different style/structure for mini table of contents
 
 # Generate Manual
 
