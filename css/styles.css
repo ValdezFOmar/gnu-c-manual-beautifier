@@ -238,6 +238,7 @@ div.example :is(pre, .normal) {
     margin: 0;
     background: none;
     font-size: 0.9em;
+    line-height: 1.3;
 }
 
 pre.example-preformatted code.code {
