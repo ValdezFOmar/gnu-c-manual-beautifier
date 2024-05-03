@@ -3,11 +3,20 @@ profile = 'black'
 line_length = 100
 skip_gitignore = true
 
+[tool.black]
+line-length = 100
+target-version = ['py39']
+include = '''
+(
+    \.pyi?$
+)
+'''
+
 [tool.pyright]
 pythonVersion = '3.9'
 pythonPlatform = 'All'
 typeCheckingMode = 'strict'
-reportUnusedFunction = 'information'
+reportUnusedFunction = false
 reportUnusedImport = false
 reportUnknownMemberType = false
 reportUnknownArgumentType = false

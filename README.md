@@ -3,7 +3,7 @@
 This python script re parses the HTML generated from the
 [GNU C Language Introduction and Reference Manual](https://www.gnu.org/software/c-intro-and-ref/) and adds:
 
-- [x] CSS style sheets 
+- [x] CSS style sheets
 - [x] Syntax highlighting for code blocks
 - [ ] A side panel for navigating between chapters/sections
 - [x] Improved navbar

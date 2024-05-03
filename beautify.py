@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-import re
 import argparse
 import copy
-from pathlib import Path
+import re
 from collections.abc import Iterable
+from pathlib import Path
 from typing import TYPE_CHECKING, NamedTuple
 
 import bs4
@@ -168,7 +168,9 @@ def process_html(destination: Path, html_source: Path, stylesheet: Path, assets:
         process_html_page(destination, file, stylesheet, assets)
 
 
-def process_html_page(destination: Path, html_source: Path, stylesheet: Path, assets: Assets) -> None:
+def process_html_page(
+    destination: Path, html_source: Path, stylesheet: Path, assets: Assets
+) -> None:
     with open(html_source, 'r', encoding='utf-8') as f:
         html = bs4.BeautifulSoup(f, PARSER)
     add_css(html, stylesheet)
@@ -204,8 +206,8 @@ def main() -> int:
     css = css_dir / 'styles.css'
     assets_dir = Path('assets/')
     assets = Assets(
-         prev_img=assets_dir / 'go-previous.svg',
-         next_img=assets_dir / 'go-next.svg',
+        prev_img=assets_dir / 'go-previous.svg',
+        next_img=assets_dir / 'go-next.svg',
     )
 
     if args.css:

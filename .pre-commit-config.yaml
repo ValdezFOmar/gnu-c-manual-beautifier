@@ -1,0 +1,32 @@
+exclude: |
+  (?x)^(
+    css/normalize.css
+    |\.git.+
+    |LICENSE
+    |assets/.+
+    |gnu-c-manual/.+
+  )$
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-toml
+      - id: check-yaml
+      - id: double-quote-string-fixer
+      - id: requirements-txt-fixer
+
+  - repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 24.4.2
+    hooks:
+      - id: black
+        language_version: python3.9
+        args: [--skip-string-normalization]
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        name: isort (python)
