@@ -41,5 +41,5 @@ This program is licensed under the [GLPv3](LICENSE) or later.
 The following icons were taken from the [Papirus Icon Theme](https://github.com/PapirusDevelopmentTeam/papirus-icon-theme/)
 which is licensed under the same license:
 
-- [`go-previous.svg`](css/go-previous.svg)
-- [`go-next.svg`](css/go-next.svg)
+- [`go-previous.svg`](assets/go-previous.svg)
+- [`go-next.svg`](assets/go-next.svg)
