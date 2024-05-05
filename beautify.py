@@ -149,9 +149,20 @@ def change_mini_toc(soup: Soup) -> Soup:
     div.append(toc_header)
     div.append(toc.extract())
     extent_header.insert_after(div)
-    assert div.parent
-    # the mini-toc may overflow
-    div.parent['class'].append('contain-float')  # pyright: ignore[reportAttributeAccessIssue]
+    return soup
+
+
+def change_footer(soup: Soup) -> Soup:
+    main_content = soup.find(class_=CLASS_EXTEN_LEVEL_PATTERN)
+    if not isinstance(main_content, bs4.Tag):
+        return soup
+    footer = soup.new_tag('footer', id='footer')
+    # NOTE: For some reason the iterator needs to be consumed before appending the elements
+    # to a new tag or wierd things might happen. Also, when the elements are appended to another
+    # they are removed from the original tree, as if `extract()` was called on them.
+    footer.extend(tuple(main_content.next_siblings))
+    assert not main_content.next_sibling  # There shouldn't be any siblings
+    main_content.insert_after(footer)
     return soup
 
 
@@ -177,6 +188,7 @@ def process_html_page(
     highlight_codeblocks(html)
     generate_navbar(html, assets)
     change_mini_toc(html)
+    change_footer(html)
     with open(destination / html_source.name, 'w', encoding='utf-8') as out:
         out.write(html.decode(formatter='html'))
 
