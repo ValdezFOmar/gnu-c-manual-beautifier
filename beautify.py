@@ -21,6 +21,7 @@ if TYPE_CHECKING:
     Soup: TypeAlias = bs4.BeautifulSoup
 
 
+HTTP_URL_PATTERN = re.compile(r'^http')
 CLASS_EXTEN_LEVEL_PATTERN = re.compile(r'\w+-level-extent')
 STYLE = 'github-dark'
 PARSER = 'html.parser'
@@ -166,6 +167,12 @@ def change_footer(soup: Soup) -> Soup:
     return soup
 
 
+def change_external_links(soup: Soup) -> Soup:
+    for a_tag in soup.find_all('a', href=HTTP_URL_PATTERN):
+        a_tag['target'] = '_blank'
+    return soup
+
+
 def process_html(destination: Path, html_source: Path, stylesheet: Path, assets: Assets) -> None:
     destination.mkdir(parents=True, exist_ok=True)
     html_pages = tuple(html_source.glob('*.html'))
@@ -189,6 +196,7 @@ def process_html_page(
     generate_navbar(html, assets)
     change_mini_toc(html)
     change_footer(html)
+    change_external_links(html)
     with open(destination / html_source.name, 'w', encoding='utf-8') as out:
         out.write(html.decode(formatter='html'))
 
